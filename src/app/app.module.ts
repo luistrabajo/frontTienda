@@ -6,11 +6,13 @@ import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CotizacionInitComponent } from './cotizacion-init/cotizacion-init.component';
+import { BuscarCotizacionesComponent } from './buscar-cotizaciones/buscar-cotizaciones.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CotizacionInitComponent
+    CotizacionInitComponent,
+    BuscarCotizacionesComponent
   ],
   imports: [
     BrowserModule,

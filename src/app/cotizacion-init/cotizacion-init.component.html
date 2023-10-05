@@ -1,64 +1,85 @@
-<div>
-<H1>COTIZACION</H1>
 
-<div class="col-md-4 offset-md-4">
-    <div class="mb-3">
-    <label for="exampleFormControlInput1" class="form-label">Nombre Producto</label>
-    <br>
-    <select [(ngModel)]="opcionSeleccionada" (change)="capturar()">
-        <option value="0">Selecciona una opción</option>
-        <option *ngFor="let lista of listaProductos">
-          {{lista.nombre}}
-        </option>
-    </select>
-  </div>
-  <div class="col-md-4">
-    <label for="exampleFormControlTextarea1" class="form-label">Cantidad</label>
-    <input class="form-control" type="number" id="valorA" name="valorA" [(ngModel)]="unidades" min="1" step="1">
-</div>
-<br>
-<button type="button" class="btn btn-primary" (click)="introducir()" >Introducir</button>
-</div>
-<br>
-<br>
-
-<table class="table table-dark">
-    <thead>
-      <tr>
-        <th scope="col">CODIGO</th>
-        <th scope="col">NOMBRE</th>
-        <th scope="col">PRECIO</th>
-        <th scope="col">UNIDADES</th>
-        <th scope="col">PRECIO UNITARIO</th>
-        <th scope="col"></th>
-      </tr>
-    </thead>
-    <tbody>                 
-        
-        <tr class="table-dark" *ngFor="let listaC of listaProductosC">
-            <th scope="row">{{listaC.codigo}}</th>       
-            <td>{{listaC.nombre}}</td> 
-            <td>{{listaC.precio}}</td>
-            <td>{{listaC.unidades}}</td>
-            <td>{{listaC.valorProUni}}</td>
-            <td><button type="button" class="btn btn-primary" (click)="eliminar(listaC)" >Quitar</button></td>
-        </tr>      
-    </tbody>
-  </table>
-  <div class="col-md-4 offset-md-4">
-   
-<div class="col-md-4">
-    <label for="" class="form-label">TOTAL COTIZACION</label>
-    <input class="form-control" type="number" id="total" name="total" [(ngModel)]="total" >
-</div>
-<div class="col-md-6">
-    <button type="button" class="btn btn-primary" (click)="introducir()" >Crear</button>
-    <button type="button" class="btn btn-danger" (click)="introducir()" >Borrar</button>
-</div>
-
-</div>
-
+<div class="container">
+  <H1>COTIZACION</H1>
  
+  
+  <div *ngIf="this.marcador == true" class="container">
+    <H1>SE GUARDO LA COTIZACION COTIZACION</H1>
+  </div>
+
+  <div class="row g-3">
+    <h5>Fecha {{fechaActual}}</h5>
+    <div class="col-auto">
+      <label for="Nombre Cliente" class="form-label">Nombre Cliente</label>
+      <input type="text" class="form-control" id="NombreCliente" name="NombreCliente" [(ngModel)]="nombreCliente"aria-describedby="emailHelp">
+      <div id="NombreClienteHelp" class="form-text">Escribe el nombre del cliente</div>
+    </div>
+    <div class="col-auto">
+      <label for="Numero Telefono" class="form-label">Numero Telefono</label>
+      <input type="text" class="form-control" id="NumeroTelefono" name="NumeroTelefono"[(ngModel)]="numeroTelefono" aria-describedby="emailHelp">
+      <div id="NumeroTelefonoHelp" class="form-text">Escribe el numero de telefono del cliente</div>
+    </div>
+      <hr>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-auto">
+        <label for="exampleFormControlInput1" class="form-label">Selecciona el Producto</label>
+        <br>
+        <select [(ngModel)]="opcionSeleccionada" (change)="capturarProducto()">
+            <option value="0">Selecciona una opción</option>
+            <option *ngFor="let lista of listaProductosS">
+              {{lista.product_name}}
+            </option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <label for="exampleFormControlTextarea1" class="form-label">Selecciona la cantidad</label>
+        <input class="form-control" type="number" id="valorA" name="valorA" [(ngModel)]="unidades" min="1" step="1">   
+      </div>
+      <div class="col-auto">
+        <br>
+        <button type="button" class="btn btn-primary" (click)="introducirItems()" >Introducir</button> 
+       
+      </div>
+      <hr>  
+    </div>
 
 
+
+<form class="row g-3">                
+          <table class="table table-dark">
+            <thead>
+              <tr>
+                <th scope="col">CODIGO</th>
+                <th scope="col">NOMBRE</th>
+                <th scope="col">PRECIO</th>
+                <th scope="col">UNIDADES</th>
+                <th scope="col">PRECIO UNITARIO</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr class="table-dark" *ngFor="let listaC of listaProductosC">
+                    <th scope="row">{{listaC.codigo}}</th>       
+                    <td>{{listaC.nombre}}</td> 
+                    <td>{{listaC.precio}}</td>
+                    <td>{{listaC.cantidad}}</td>
+                    <td>{{listaC.valor_pro_uni}}</td>
+                    <td><button type="button" class="btn btn-primary" (click)="eliminarItem(listaC)" >Quitar</button></td>
+                </tr>      
+            </tbody>
+          </table>
+
+          <div class="col-auto">
+            <label for="" class="form-label">TOTAL COTIZACION</label>
+            <input class="form-control" type="number" id="total" name="total" [(ngModel)]="total" >
+        </div>
+  </form>
+        <div class="col-auto">
+          <br> 
+            <button type="button" class="btn btn-primary" (click)="crearCotizacion()" >Crear Cotizacion</button>
+            <button type="button" class="btn btn-danger" (click)="borrarCotizacion()" >Borrar Cotizacion</button>
+        </div>
 </div>
+

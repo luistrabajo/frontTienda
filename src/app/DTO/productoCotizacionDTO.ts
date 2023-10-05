@@ -1,10 +1,10 @@
 
-export default interface ProCotDTO{
+export default interface Item{
 
     codigo?: string;
     nombre?: string;
     precio?: number;
-    unidades?: number;
-    valorProUni?: number;
+    cantidad?: number;
+    valor_pro_uni?: number;
     
 }

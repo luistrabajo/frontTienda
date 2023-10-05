@@ -1,4 +1,4 @@
-export default interface ProCotDTO{
+export default interface ProductDTO{
 
     product_id?:number, 
     product_code?:number,  

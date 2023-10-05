@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
-import {NgForm} from '@angular/forms';
-
-import ProCotDTO from '../DTO/productoCotizacionDTO'
+import { DatePipe } from '@angular/common';
 
 
+import Item from '../DTO/productoCotizacionDTO'
+import ProductDTO from '../DTO/productDTO'
+import Cotizacion from '../DTO/cotizacionDTO'
+
+import {BBDDService} from '../service/bbdd.service'
 
 @Component({
   selector: 'app-cotizacion-init',
@@ -12,112 +15,194 @@ import ProCotDTO from '../DTO/productoCotizacionDTO'
 })
 export class CotizacionInitComponent {
 
+ constructor( private service: BBDDService){
+    this.cargarProductos();
+    this.changeFormat();   
+ }
 
 
-capturar() {
-  this.nombre = this.opcionSeleccionada;
-}
-
-introducir(){
-  
-  this.index = this.listaProductos.find((element) => element.nombre == this.nombre)
-
-  let precio:string =JSON.stringify(this.index.precio)
-  let nombre:string =JSON.stringify(this.index.nombre)
-  let codigo:string = JSON.stringify(this.index.codigo)
-
-  this.proCotDTO.codigo =codigo.replace(/["']/g, "");
-  this.proCotDTO.nombre =nombre.replace(/["']/g, "");
-  
-  this.proCotDTO.precio = parseInt(precio);
-  this.proCotDTO.unidades = this.unidades;
-  this.proCotDTO.valorProUni = this.proCotDTO.precio * this.unidades;
-
-  
-  this.total = this.total + this.proCotDTO.valorProUni; 
-  this.listaProductosC.push(this.proCotDTO);
-  
-  this.borrar()
-  this.unidades=1;
-
-}
-
-
-borrar(){
-  this.proCotDTO = {
-    codigo:'',
-    nombre: '0',
-    precio: 0,
-    unidades: 0,
-    valorProUni : 0
+ cargarProductos(){     
+      if(this.listaProductosS == null)
+      {
+        this.service.getProduct().subscribe({
+          next:(response:any) => {  
+            this.listaProductosS = response
+            console.log(response)
+          
+          },
+          error: (error:any) => {
+            console.log(error)
+          }
+        });
+      }    
   }
+
+
+
+
+capturarProducto() {
+  this.product_name = this.opcionSeleccionada;
 }
 
-eliminar(pro: any){  
+    introducirItems(){
+      
+      this.index = this.listaProductosS.find((element:ProductDTO) => element.product_name == this.product_name)
+
+      let precio:any =JSON.stringify(this.index.product_price)
+      let nombre:string =JSON.stringify(this.index.product_name)
+      let codigo:string = JSON.stringify(this.index.product_code)
+
+      this.proCotDTO.codigo =codigo.replace(/["']/g, "");
+      this.proCotDTO.nombre =nombre.replace(/["']/g, "");
+      
+      this.proCotDTO.precio = parseInt(precio);
+      this.proCotDTO.cantidad = this.unidades;
+      this.proCotDTO.valor_pro_uni = this.proCotDTO.precio * this.unidades;
+
+      
+      this.total = this.total + this.proCotDTO.valor_pro_uni; 
+      this.listaProductosC.push(this.proCotDTO);
+      
+      this.borrarVariableproCotDTO()
+      this.unidades=1;
+
+    }
+
+
+    borrarVariableproCotDTO(){
+      this.proCotDTO = {
+        codigo:'',
+        nombre: '',
+        precio: 0,
+        cantidad: 0,
+        valor_pro_uni : 0
+      }
+
+
+    }
+
+
+    borrarCotizacion(){
+      this.proCotDTO = {
+        codigo:'',
+        nombre: '',
+        precio: 0,
+        cantidad: 0,
+        valor_pro_uni : 0
+      }
+
+      this.cotizacion = {          
+        nombre_cliente: '',
+        numero_telefono: 0,
+        fecha_creacion: '',
+        valor_total: 0, 
+        descripcion: []
+        }
+
+        this.total=0;
+
+        this.listaProductosC=[]
+        this.nombreCliente='';
+        this.numeroTelefono=0;
+        this.borrarVariableproCotDTO()
+
+    }
+
+
+
+
+
+
+
+eliminarItem(pro: any){  
   this.listaProductosC.splice(pro.name,1);
   this.total=0;  
   this.listaProductosC.forEach(element => {
-    if(element.valorProUni){
-      this.total = this.total + element.valorProUni;
+    if(element.valor_pro_uni){
+      this.total = this.total + element.valor_pro_uni;
     }    
   })
   }
 
-posicion:number=0;
-index:any;
-nombre:string='';
-unidades:number =1;
-precio:number=0;
-total:number=0;
-
-opcionSeleccionada:any;
 
 
+  
+changeFormat(){
+    this.changedFormat = this.pipe.transform(this.hoy, 'YYYY-MM-dd');
+    this.fechaActual = this.changedFormat;   
+  }
 
-  proCotDTO: ProCotDTO  = {
+
+
+
+
+
+  crearCotizacion(){
+    this.cotizacion = {          
+          nombre_cliente: this.nombreCliente,
+          numero_telefono: this.numeroTelefono,
+          fecha_creacion: this.fechaActual,
+          valor_total: this.total, 
+          descripcion: this.listaProductosC
+          }
+                
+          this.guardarCotizacion( this.cotizacion)
+          this.borrarCotizacion();
+
+
+  }
+
+
+  guardarCotizacion(cotizacion:Cotizacion){
+    this.service.postCotizacion(cotizacion).subscribe({
+      next:(response:any) => { 
+        
+        console.log(response)
+        this.marcador=true;
+        
+      },
+      error: (error:any) => {
+        console.log(error)
+      }
+  })
+}
+
+
+
+proCotDTO: Item  = {
     codigo:'',
     nombre: '0',
     precio: 0,
-    unidades: 0,
-    valorProUni : 0    
-  }
-   
+    cantidad: 0,
+    valor_pro_uni : 0    
+    }
 
 
-  listaProductosC : ProCotDTO[] = [];  
+cotizacion:Cotizacion ={  
+      cotizacion_id: 0,
+      nombre_cliente: '',
+      numero_telefono: 0,
+      fecha_creacion: '',
+      valor_total: 0, 
+      descripcion: []
+      }
 
 
-   listaProductos : ProCotDTO[] = [
-    {
-     codigo:'001',
-     nombre: 'CocaCola',
-     precio: 1000,
-     unidades: 2,
-     valorProUni : 0
-   },
-    
-   {
-     codigo:'002',
-     nombre: 'Pepsi',
-     precio: 1000,
-     unidades: 2,
-     valorProUni : 0
-   },
-   {
-     codigo:'003',
-     nombre: 'Bigcola',
-     precio: 1000,
-     unidades: 2,
-     valorProUni : 0
-   },
-   {
-     codigo:'004',
-     nombre: 'SevenUP',
-     precio: 1000,
-     unidades: 2,
-     valorProUni : 0
-   }
- ]
- 
+marcador:boolean=false;
+nombreCliente: string='';
+numeroTelefono: any;
+changedFormat: any;
+hoy = new Date();
+fechaActual:any = '';
+pipe = new DatePipe('en-CO');
+posicion:number=0;
+index: any;
+product_name: string='';
+unidades: number =1;
+precio: number=0;
+total: number=0;
+opcionSeleccionada:string='0';  
+listaProductosS: any;
+listaProductosC: Item[]=[];
 
 }
