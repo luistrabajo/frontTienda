@@ -16,84 +16,73 @@ export class BuscarCotizacionesComponent {
  }
 
 
-buscarCotizaciones(){
-  this.cotizacionesF=[];
-  this.cotizaciones=[];
-    this.service.getCotizacion(this.numeroTelefono).subscribe({
-      next:(response:any) => {        
-        this.cotizaciones = response;
-        console.log(response)
-        console.log(this.numeroTelefono+"//////////////////////////////")  
-        this.formatCotizaciones()
+  buscarCotizaciones(){
+      this.service.getCotizacion(this.numeroTelefono).subscribe({
+        next:(response:any) => {        
+          this.cotizaciones = response;
+          console.log(response)
+          this. formatCotizaciones();
+        },
+        error: (error:any) => {
+          console.log(error)
+        }
+    })
+  }
 
+  formatCotizaciones(){
+      this.cotizaciones.forEach((cotizacion) => {
+        cotizacion.fecha_creacion =this.changeFormat(cotizacion.fecha_creacion)
+        this.cotizacionesF.push(cotizacion);
+      });
+    
+  }
+
+  changeFormat(fecha:string){
+    let changedFormat: any;
+    let fechaActual:any = '';
+    let pipe = new DatePipe('en-CO');
+    changedFormat = pipe.transform(fecha, 'YYYY-MM-dd');
+    return fechaActual = changedFormat; 
+
+  }
+
+  borrar(){
+    this.numeroTelefono='';
+    this.cotizacionesF=[]
+  }
+
+  cancelar(){
+    this.id=null;
+  }
+
+  eliminarCotizacion(){  
+    this.service.deleteCotizacion(this.id).subscribe({
+      next:(response:any) => {
+        console.log(response); 
       },
       error: (error:any) => {
         console.log(error)
       }
   })
-}
+  }
 
-formatCotizaciones(){
-    this.cotizaciones.forEach((cotizacion) => {
-      cotizacion.fecha_creacion =this.changeFormat(cotizacion.fecha_creacion)
-      this.cotizacionesF.push(cotizacion);
-    });
-  
-}
-
-changeFormat(fecha:string){
-  let changedFormat: any;
-  let fechaActual:any = '';
-  let pipe = new DatePipe('en-CO');
-  changedFormat = pipe.transform(fecha, 'YYYY-MM-dd');
-  return fechaActual = changedFormat; 
-
-}
-borrar(){
-  this.cotizacionesF=[]
-}
-cancelar(){
-  this.id=null;
-}
-
-eliminarCotizacion(){ 
-  
-  this.service.deleteCotizacion(this.id).subscribe({
-    next:(response:any) => {
-      console.log(response); 
-     
+ eliminarCotizaciones(){
+      this.cotizacionesF=[];
+      this.cotizaciones=[];
+      this.eliminarCotizacion();
+      setTimeout(() => {
+        this.buscarCotizaciones();
+      }, 500);
       
-    },
-    error: (error:any) => {
-      console.log(error)
-    }
-})
-}
-
- eco(){
-  this.cotizacionesF=[];
-  this.cotizaciones=[];
-  this.eliminarCotizacion();
-  setTimeout(() => {
-    this.buscarCotizaciones();
-  }, 500);
-  
  
-   
 
 }
-
-
-
 
 
 
 numeroTelefono:any;
 cotizaciones:Cotizacion[]=[];
 cotizacionesF:Cotizacion[]=[];
-
 id:any;
-
-
 
 }

@@ -44,7 +44,8 @@ capturarProducto() {
   this.product_name = this.opcionSeleccionada;
 }
 
-    introducirItems(){
+
+introducirItems(){
       
       this.index = this.listaProductosS.find((element:ProductDTO) => element.product_name == this.product_name)
 
@@ -82,7 +83,7 @@ capturarProducto() {
     }
 
 
-    borrarCotizacion(){
+  borrarCotizacion(){
       this.proCotDTO = {
         codigo:'',
         nombre: '',
@@ -100,10 +101,10 @@ capturarProducto() {
         }
 
         this.total=0;
-
         this.listaProductosC=[]
         this.nombreCliente='';
-        this.numeroTelefono=0;
+        this.numeroTelefono='';
+        this.opcionSeleccionada=''
         this.borrarVariableproCotDTO()
 
     }
@@ -114,58 +115,95 @@ capturarProducto() {
 
 
 
-eliminarItem(pro: any){  
+  eliminarItem(pro: any){  
   this.listaProductosC.splice(pro.name,1);
   this.total=0;  
   this.listaProductosC.forEach(element => {
     if(element.valor_pro_uni){
       this.total = this.total + element.valor_pro_uni;
     }    
-  })
-  }
+    })
+    }
 
 
 
   
-changeFormat(){
+  changeFormat(){
     this.changedFormat = this.pipe.transform(this.hoy, 'YYYY-MM-dd');
     this.fechaActual = this.changedFormat;   
-  }
+    }
 
 
 
 
 
+  crearCotizacion(){    
+            this.cotizacion = {          
+                  nombre_cliente: this.nombreCliente,
+                  numero_telefono: this.numeroTelefono,
+                  fecha_creacion: this.fechaActual,
+                  valor_total: this.total, 
+                  descripcion: this.listaProductosC
+                  }
+            if(this.cotizacion.nombre_cliente != ''){
+                    this.guardarCotizacion(this.cotizacion)
+                    setTimeout(() => {
+                      this.borrarCotizacion();
+                      this.mostrarResultado() 
+                    },500);
+                  }      
+    }
 
-  crearCotizacion(){
-    this.cotizacion = {          
-          nombre_cliente: this.nombreCliente,
-          numero_telefono: this.numeroTelefono,
-          fecha_creacion: this.fechaActual,
-          valor_total: this.total, 
-          descripcion: this.listaProductosC
-          }
-                
-          this.guardarCotizacion( this.cotizacion)
-          this.borrarCotizacion();
 
 
-  }
 
 
   guardarCotizacion(cotizacion:Cotizacion){
     this.service.postCotizacion(cotizacion).subscribe({
       next:(response:any) => { 
-        
+        this.cotizacionRe=response;
         console.log(response)
-        this.marcador=true;
-        
       },
       error: (error:any) => {
         console.log(error)
       }
-  })
-}
+      })
+    }
+
+
+    mostrarResultado(){
+      setTimeout(() => {
+        this.fechaRes = this.changeFormatB(this.cotizacionRe.fecha_creacion)
+        this.marcador=true;
+        console.log(this.cotizacionRe)
+      },500);
+     
+    }
+
+
+    volver(){
+        this.marcador =false;
+        this.cotizacionRe ={  
+          cotizacion_id: 0,
+          nombre_cliente: '',
+          numero_telefono: 0,
+          fecha_creacion: '',
+          valor_total: 0, 
+          descripcion: []
+          }
+      }
+
+
+
+
+    changeFormatB(fecha:string){
+      let changedFormat: any;
+      let fechaActual:any = '';
+      let pipe = new DatePipe('en-CO');
+      changedFormat = pipe.transform(fecha, 'YYYY-MM-dd');
+      return fechaActual = changedFormat; 
+      }
+
 
 
 
@@ -186,8 +224,19 @@ cotizacion:Cotizacion ={
       valor_total: 0, 
       descripcion: []
       }
+     
+
+cotizacionRe:Cotizacion ={  
+        cotizacion_id: 0,
+        nombre_cliente: '',
+        numero_telefono: 0,
+        fecha_creacion: '',
+        valor_total: 0, 
+        descripcion: []
+        }
 
 
+fechaRes:any='';
 marcador:boolean=false;
 nombreCliente: string='';
 numeroTelefono: any;
