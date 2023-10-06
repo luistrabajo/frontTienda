@@ -78,8 +78,6 @@ introducirItems(){
         cantidad: 0,
         valor_pro_uni : 0
       }
-
-
     }
 
 
@@ -125,15 +123,11 @@ introducirItems(){
     })
     }
 
-
-
   
   changeFormat(){
     this.changedFormat = this.pipe.transform(this.hoy, 'YYYY-MM-dd');
     this.fechaActual = this.changedFormat;   
     }
-
-
 
 
 
@@ -145,15 +139,21 @@ introducirItems(){
                   valor_total: this.total, 
                   descripcion: this.listaProductosC
                   }
-            if(this.cotizacion.nombre_cliente != ''){
-                    this.guardarCotizacion(this.cotizacion)
-                    setTimeout(() => {
-                      this.borrarCotizacion();
-                      this.mostrarResultado() 
-                    },500);
-                  }      
+            if(this.cotizacion.nombre_cliente != '' && this.cotizacion.valor_total !=0 ){
+                    this.guardarCotizacion(this.cotizacion)                     
+                  } 
     }
 
+
+    mostrarResultado(){   
+        this.borrarCotizacion();   
+        this.fechaRes = this.changeFormatB(this.cotizacionRe.fecha_creacion)
+        this.marcador=true;
+        console.log(this.cotizacionRe)        
+      while(this.cotizacionRe.fecha_creacion = ''){
+        this.mostrarResultado();
+      }     
+    }
 
 
 
@@ -163,6 +163,7 @@ introducirItems(){
       next:(response:any) => { 
         this.cotizacionRe=response;
         console.log(response)
+        this.mostrarResultado();
       },
       error: (error:any) => {
         console.log(error)
@@ -170,15 +171,6 @@ introducirItems(){
       })
     }
 
-
-    mostrarResultado(){
-      setTimeout(() => {
-        this.fechaRes = this.changeFormatB(this.cotizacionRe.fecha_creacion)
-        this.marcador=true;
-        console.log(this.cotizacionRe)
-      },500);
-     
-    }
 
 
     volver(){
@@ -196,12 +188,9 @@ introducirItems(){
 
 
 
-    changeFormatB(fecha:string){
-      let changedFormat: any;
-      let fechaActual:any = '';
+    changeFormatB(fecha:any){    
       let pipe = new DatePipe('en-CO');
-      changedFormat = pipe.transform(fecha, 'YYYY-MM-dd');
-      return fechaActual = changedFormat; 
+      return pipe.transform(fecha, 'YYYY-MM-dd');
       }
 
 
