@@ -11,8 +11,7 @@ import { DatePipe } from '@angular/common';
 })
 export class BuscarCotizacionesComponent {
 
-  constructor( private service: BBDDService){
-    
+  constructor( private service: BBDDService){    
  }
 
 
@@ -37,13 +36,9 @@ export class BuscarCotizacionesComponent {
     
   }
 
-  changeFormat(fecha:string){
-    let changedFormat: any;
-    let fechaActual:any = '';
-    let pipe = new DatePipe('en-CO');
-    changedFormat = pipe.transform(fecha, 'YYYY-MM-dd');
-    return fechaActual = changedFormat; 
-
+  changeFormat(fecha:string){   
+    let pipe = new DatePipe('en-CO');    
+    return  pipe.transform(fecha, 'YYYY-MM-dd');
   }
 
   borrar(){
